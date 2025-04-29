@@ -1,5 +1,9 @@
 package br.com.empresa.gerenciamento_usuarios.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -9,49 +13,58 @@ import br.com.empresa.gerenciamento_usuarios.enums.TipoUsuario;
 
 public class UsuarioDTO {
 
-    private Long id;
+    @NotNull(message = "O nome não pode ser nulo.")
+    @Size(min = 30, message = "O nome deve ter pelo menos 30 caracteres.")
     private String nome;
+
+    @NotNull(message = "O nome de usuário não pode ser nulo.")
     private String nomeUsuario;
+
     private String foto;
-    private String cep;
-    private String endereco;
+
+    @NotNull(message = "A senha não pode ser nula.")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$", 
+             message = "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula e um número.")
+    private String senha;
+
+    @NotNull(message = "O email não pode ser nulo.")
+    @Email(message = "O email deve estar em um formato válido.")
     private String email;
+
+    @NotNull(message = "A data de nascimento não pode ser nula.")
     private LocalDate dataNascimento;
+
+    @NotNull(message = "O sexo não pode ser nulo.")
     private Sexo sexo;
+
+    @NotNull(message = "O tipo de usuário não pode ser nulo.")
     private TipoUsuario tipo;
+
+    @NotNull(message = "O documento não pode ser nulo.")
+    @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}|\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}",
+             message = "CPF ou CNPJ no formato inválido.")
     private String documento;
+
     private Set<Role> roles;
 
-    public UsuarioDTO() {
-    	
-    }
-    
-    public UsuarioDTO(Long id, String nome, String nomeUsuario, String foto, String cep, String endereco, String email,
-			LocalDate dataNascimento, Sexo sexo, TipoUsuario tipo, String documento, Set<Role> roles) {
-		super();
-		this.id = id;
-		this.nome = nome;
-		this.nomeUsuario = nomeUsuario;
-		this.foto = foto;
-		this.cep = cep;
-		this.endereco = endereco;
-		this.email = email;
-		this.dataNascimento = dataNascimento;
-		this.sexo = sexo;
-		this.tipo = tipo;
-		this.documento = documento;
-		this.roles = roles;
-	}
+    public UsuarioDTO() {}
 
-	// Getters e Setters
-    public Long getId() {
-        return id;
+    public UsuarioDTO(String nome, String nomeUsuario, String foto, String email, 
+                      LocalDate dataNascimento, Sexo sexo, TipoUsuario tipo, String documento, 
+                      String senha, Set<Role> roles) {
+        this.nome = nome;
+        this.nomeUsuario = nomeUsuario;
+        this.foto = foto;
+        this.email = email;
+        this.senha = senha;
+        this.dataNascimento = dataNascimento;
+        this.sexo = sexo;
+        this.tipo = tipo;
+        this.documento = documento;
+        this.roles = roles;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    // Getters e Setters
     public String getNome() {
         return nome;
     }
@@ -76,20 +89,12 @@ public class UsuarioDTO {
         this.foto = foto;
     }
 
-    public String getCep() {
-        return cep;
+    public String getSenha() {
+        return senha;
     }
 
-    public void setCep(String cep) {
-        this.cep = cep;
-    }
-
-    public String getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 
     public String getEmail() {

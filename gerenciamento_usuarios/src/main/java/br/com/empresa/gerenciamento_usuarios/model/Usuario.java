@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import br.com.empresa.gerenciamento_usuarios.enums.Role;
 import br.com.empresa.gerenciamento_usuarios.enums.Sexo;
 import br.com.empresa.gerenciamento_usuarios.enums.TipoUsuario;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -21,6 +22,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -48,15 +50,9 @@ public class Usuario implements Serializable {
 
 	@NotNull
 	@Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula e um número.")
-
 	private String senha;
 
 	private String foto; // URL ou caminho da foto
-
-	@NotNull
-	private String cep; // Para buscar na API dos Correios
-
-	private String endereco; // Endereço preenchido automaticamente pela API dos Correios
 
 	@NotNull
 	@Email(message = "O email deve estar em um formato válido.")
@@ -84,36 +80,32 @@ public class Usuario implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private Set<Role> roles; // Permissões de acesso do usuário
 
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "endereco_id") // Define a chave estrangeira na tabela de usuários
+	private Endereco endereco; // Relacionamento com a classe Endereco
+
 	public Usuario() {
 
 	}
 
-	public Usuario(Long id, @NotNull @Size(min = 30, message = "O nome deve ter pelo menos 30 caracteres.") String nome,
-			@NotNull String nomeUsuario,
-			@NotNull @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula e um número.") String senha,
-			String foto, @NotNull String cep, String endereco,
-			@NotNull @Email(message = "O email deve estar em um formato válido.") String email,
-			@NotNull @Past(message = "A data de nascimento deve estar no passado.") LocalDate dataNascimento,
-			@NotNull Sexo sexo, @NotNull TipoUsuario tipo,
-			@NotNull @Pattern(regexp = "(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2})|(\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2})", message = "CPF ou CNPJ no formato inválido.") String documento,
-			Set<Role> roles) {
+	public Usuario(Long id, String nome, String nomeUsuario, String senha, String foto, String email,
+			LocalDate dataNascimento, Sexo sexo, TipoUsuario tipo, String documento, Set<Role> roles,
+			Endereco endereco) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.nomeUsuario = nomeUsuario;
 		this.senha = senha;
 		this.foto = foto;
-		this.cep = cep;
-		this.endereco = endereco;
 		this.email = email;
 		this.dataNascimento = dataNascimento;
 		this.sexo = sexo;
 		this.tipo = tipo;
 		this.documento = documento;
 		this.roles = roles;
+		this.endereco = endereco;
 	}
 
-	// Getters e Setters
 	public Long getId() {
 		return id;
 	}
@@ -152,22 +144,6 @@ public class Usuario implements Serializable {
 
 	public void setFoto(String foto) {
 		this.foto = foto;
-	}
-
-	public String getCep() {
-		return cep;
-	}
-
-	public void setCep(String cep) {
-		this.cep = cep;
-	}
-
-	public String getEndereco() {
-		return endereco;
-	}
-
-	public void setEndereco(String endereco) {
-		this.endereco = endereco;
 	}
 
 	public String getEmail() {
@@ -218,10 +194,12 @@ public class Usuario implements Serializable {
 		this.roles = roles;
 	}
 
-	// Método para verificar a senha
-	public boolean validarSenha(String senha) {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		return encoder.matches(senha, this.senha);
+	public Endereco getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
 	}
 
 	public void criptografarSenha() {
@@ -229,12 +207,16 @@ public class Usuario implements Serializable {
 		this.senha = encoder.encode(this.senha);
 	}
 
+	public boolean validarSenha(String senha) {
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		return encoder.matches(senha, this.senha);
+	}
+
 	@Override
 	public String toString() {
 		return "Usuario [id=" + id + ", nome=" + nome + ", nomeUsuario=" + nomeUsuario + ", senha=" + senha + ", foto="
-				+ foto + ", cep=" + cep + ", endereco=" + endereco + ", email=" + email + ", dataNascimento="
-				+ dataNascimento + ", sexo=" + sexo + ", tipo=" + tipo + ", documento=" + documento + ", roles=" + roles
-				+ "]";
+				+ foto + ", email=" + email + ", dataNascimento=" + dataNascimento + ", sexo=" + sexo + ", tipo=" + tipo
+				+ ", documento=" + documento + ", roles=" + roles + ", endereco=" + endereco + "]";
 	}
 
 	@Override

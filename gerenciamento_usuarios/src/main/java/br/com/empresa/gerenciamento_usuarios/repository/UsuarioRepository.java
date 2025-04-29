@@ -11,4 +11,5 @@ import br.com.empresa.gerenciamento_usuarios.model.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	List<Usuario> findByNomeContainingIgnoreCase(String nome);
 
+	boolean existsByNomeUsuario(String nomeUsuario);
 }

@@ -1,9 +1,11 @@
 package br.com.empresa.gerenciamento_usuarios.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.empresa.gerenciamento_usuarios.dto.UsuarioDTO;
@@ -57,12 +59,14 @@ public class UsuarioService {
 			throw new IllegalArgumentException(
 					"A senha deve conter pelo menos 8 caracteres, uma letra maiúscula e um número.");
 		}
-		if (usuario.getTipo() == TipoUsuario.FISICA && !usuario.getDocumento().matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")) {
-		    throw new IllegalArgumentException("O CPF está inválido para um usuário do tipo FISICA.");
+		if (usuario.getTipo() == TipoUsuario.FISICA
+				&& !usuario.getDocumento().matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")) {
+			throw new IllegalArgumentException("O CPF está inválido para um usuário do tipo FISICA.");
 		}
 
-		if (usuario.getTipo() == TipoUsuario.JURIDICA && !usuario.getDocumento().matches("\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}")) {
-		    throw new IllegalArgumentException("O CNPJ está inválido para um usuário do tipo JURIDICA.");
+		if (usuario.getTipo() == TipoUsuario.JURIDICA
+				&& !usuario.getDocumento().matches("\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}")) {
+			throw new IllegalArgumentException("O CNPJ está inválido para um usuário do tipo JURIDICA.");
 		}
 
 		// Validação 4: Criptografar a senha
@@ -71,4 +75,34 @@ public class UsuarioService {
 		// Salvar o usuário no banco de dados
 		return usuarioRepository.save(usuario);
 	}
+
+	public Usuario atualizarUsuario(Long id, UsuarioDTO usuarioDTO) {
+		return usuarioRepository.findById(id).map(usuario -> {
+			usuario.setNome(usuarioDTO.getNome());
+			usuario.setEmail(usuarioDTO.getEmail());
+			usuario.setSexo(usuarioDTO.getSexo());
+			usuario.setTipo(usuarioDTO.getTipo());
+			usuario.setDocumento(usuarioDTO.getDocumento());
+
+			if (!usuarioDTO.getSenha().matches("^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
+				throw new IllegalArgumentException(
+						"Senha inválida. Deve conter pelo menos 8 caracteres, uma letra maiúscula e um número.");
+			}
+			usuario.setSenha(new BCryptPasswordEncoder().encode(usuarioDTO.getSenha()));
+
+			return usuarioRepository.save(usuario);
+		}).orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado!"));
+	}
+
+	public void deletarUsuario(Long id) {
+		if (!usuarioRepository.existsById(id)) {
+			throw new IllegalArgumentException("Usuário não encontrado!");
+		}
+		usuarioRepository.deleteById(id);
+	}
+	
+	public List<Usuario> buscarUsuariosPorNome(String nome) {
+	    return usuarioRepository.findByNomeContainingIgnoreCase(nome);
+	}
+
 }

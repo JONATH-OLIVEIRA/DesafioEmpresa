@@ -2,7 +2,6 @@ package br.com.empresa.gerenciamento_usuarios.dto;
 
 public class EnderecoDTO {
 
-	private Long id;
 	private String cep;
 	private String logradouro;
 	private String complemento;
@@ -14,9 +13,9 @@ public class EnderecoDTO {
 	public EnderecoDTO() {
 	}
 
-	public EnderecoDTO(Long id, String cep, String logradouro, String complemento, Integer numeroCasa, String bairro,
+	public EnderecoDTO(String cep, String logradouro, String complemento, Integer numeroCasa, String bairro,
 			String localidade, String uf) {
-		this.id = id;
+
 		this.cep = cep;
 		this.logradouro = logradouro;
 		this.complemento = complemento;
@@ -27,13 +26,6 @@ public class EnderecoDTO {
 	}
 
 	// Getters e Setters
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getCep() {
 		return cep;

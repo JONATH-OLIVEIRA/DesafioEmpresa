@@ -61,6 +61,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> {
                 // **Permitir acesso ao Swagger UI**
                 auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                
+                auth.requestMatchers("/enderecos/**").permitAll();
 
                 // **Rotas públicas** (Cadastro de usuários)
                 auth.requestMatchers("/usuarios").permitAll();

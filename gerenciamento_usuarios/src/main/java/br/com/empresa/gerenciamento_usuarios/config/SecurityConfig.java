@@ -47,8 +47,8 @@ public class SecurityConfig {
                 var corsConfig = new org.springframework.web.cors.CorsConfiguration();
                 corsConfig.setAllowedOrigins(List.of("http://localhost:5173", "http://example.com")); // Domínios permitidos
                 corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                corsConfig.setAllowCredentials(true);
-                corsConfig.setAllowedHeaders(List.of("*"));
+                corsConfig.setAllowCredentials(true); // Permitir envio de credenciais (cookies e cabeçalhos)
+                corsConfig.setAllowedHeaders(List.of("*")); // Permitir todos os cabeçalhos
                 logger.info("Configuração de CORS ativada.");
                 return corsConfig;
             }))
@@ -60,20 +60,16 @@ public class SecurityConfig {
             // Configuração de autenticação e autorização
             .authorizeHttpRequests(auth -> {
                 // **Permitir acesso ao Swagger UI**
-                auth.requestMatchers(
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/swagger-resources/**",
-                        "/webjars/**"
-                ).permitAll();
-
+                auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                
                 auth.requestMatchers("/enderecos/**").permitAll();
-                auth.requestMatchers("/usuarios").permitAll();
-                auth.requestMatchers("/index.xhtml").permitAll(); // **LIBERA ACESSO PÚBLICO**
 
-                // **Rotas protegidas**
-                auth.requestMatchers("/usuarios/**").authenticated();
-                auth.requestMatchers("/dashboard/**").hasAuthority("ADMINISTRADOR");
+                // **Rotas públicas** (Cadastro de usuários)
+                auth.requestMatchers("/usuarios").permitAll();
+
+                // **Rotas protegidas por autenticação**
+                auth.requestMatchers("/usuarios/**").authenticated(); // Exige autenticação
+                auth.requestMatchers("/dashboard/**").hasAuthority("ADMINISTRADOR"); // Exige permissão de administrador
 
                 // Todas as demais rotas exigem autenticação
                 auth.anyRequest().authenticated();

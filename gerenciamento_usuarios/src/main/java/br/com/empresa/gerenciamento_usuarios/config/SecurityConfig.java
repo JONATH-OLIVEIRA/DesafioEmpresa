@@ -1,19 +1,19 @@
 package br.com.empresa.gerenciamento_usuarios.config;
 
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.context.annotation.Configuration; 
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity; 
+import org.springframework.security.config.http.SessionCreationPolicy; 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; 
+import org.springframework.security.crypto.password.PasswordEncoder; 
+import org.springframework.security.web.SecurityFilterChain; 
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; 
+import org.springframework.web.servlet.config.annotation.CorsRegistry; 
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import br.com.empresa.gerenciamento_usuarios.Service.JwtService;
@@ -36,53 +36,39 @@ public class SecurityConfig {
         logger.info("Configuração de PasswordEncoder ativada com BCrypt.");
         return new BCryptPasswordEncoder(10);
     }
-
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         logger.info("Iniciando configuração de SecurityFilterChain.");
-
         http
-            // Configuração de CORS
-            .cors(cors -> cors.configurationSource(request -> {
-                var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                corsConfig.setAllowedOrigins(List.of("http://localhost:5173", "http://example.com")); // Domínios permitidos
-                corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                corsConfig.setAllowCredentials(true); // Permitir envio de credenciais (cookies e cabeçalhos)
-                corsConfig.setAllowedHeaders(List.of("*")); // Permitir todos os cabeçalhos
-                logger.info("Configuração de CORS ativada.");
-                return corsConfig;
-            }))
-            // Desabilitar CSRF
-            .csrf(csrf -> {
-                csrf.disable();
-                logger.info("CSRF desabilitado.");
-            })
-            // Configuração de autenticação e autorização
+            .csrf(csrf -> csrf.disable()) // 🔄 Desabilita CSRF para facilitar testes
+
             .authorizeHttpRequests(auth -> {
-                // **Permitir acesso ao Swagger UI**
+                // 🔓 Liberando acesso às rotas públicas
+                auth.requestMatchers(HttpMethod.GET, "/usuarios", "/usuarios/**").permitAll();
+                auth.requestMatchers(HttpMethod.GET, "/usuarios/cadastro").permitAll();
+                auth.requestMatchers("/usuarios/cadastro", "/usuarios/salvar").permitAll();
+                auth.requestMatchers(HttpMethod.POST, "/usuarios/salvar").permitAll();
+                auth.requestMatchers(HttpMethod.GET, "/enderecos/buscar").permitAll();
+                auth.requestMatchers(HttpMethod.POST, "/enderecos/buscar").permitAll();
+                auth.requestMatchers("/enderecos", "/enderecos/**").permitAll();
                 auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
                 
-                auth.requestMatchers("/enderecos/**").permitAll();
+                // 🔓 Permitir acesso às páginas Thymeleaf e arquivos estáticos
+                auth.requestMatchers("/templates/**", "/css/**", "/js/**", "/images/**").permitAll();
 
-                // **Rotas públicas** (Cadastro de usuários)
-                auth.requestMatchers("/usuarios").permitAll();
-
-                // **Rotas protegidas por autenticação**
-                auth.requestMatchers("/usuarios/**").authenticated(); // Exige autenticação
-                auth.requestMatchers("/dashboard/**").hasAuthority("ADMINISTRADOR"); // Exige permissão de administrador
-
-                // Todas as demais rotas exigem autenticação
+                // 🔐 Bloquear demais rotas, exigindo autenticação (vem por último)
                 auth.anyRequest().authenticated();
-                logger.info("Configuração de autorização finalizada.");
             })
-            // Gerenciamento de sessão: JWT é stateless
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            // Filtro de autenticação JWT
-            .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 🔄 Evita bloqueios indesejados
+
+            .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class); // 🔄 Mantendo autenticação JWT
 
         return http.build();
     }
 
+   
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Endereço</title>
+</head>
+<body>
+    <h1>Buscar Endereço</h1>
+
+    <form th:action="@{/enderecos/buscar}" method="post">
+        <label>Digite o CEP:</label>
+        <input type="text" name="cep" placeholder="99999-999" required/>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <div th:if="${erro}" style="color: red;">
+        <p th:text="${erro}"></p>
+    </div>
+
+    <div th:if="${endereco.cep}">
+        <h2>Endereço encontrado:</h2>
+        <p><strong>CEP:</strong> <span th:text="${endereco.cep}"></span></p>
+        <p><strong>Logradouro:</strong> <span th:text="${endereco.logradouro}"></span></p>
+        <p><strong>Complemento:</strong> <span th:text="${endereco.complemento}"></span></p>
+        <p><strong>Bairro:</strong> <span th:text="${endereco.bairro}"></span></p>
+        <p><strong>Cidade:</strong> <span th:text="${endereco.localidade}"></span></p>
+        <p><strong>UF:</strong> <span th:text="${endereco.uf}"></span></p>
+    </div>
+</body>
+</html>

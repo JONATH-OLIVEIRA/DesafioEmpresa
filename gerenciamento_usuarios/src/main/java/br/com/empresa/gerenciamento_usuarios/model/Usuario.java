@@ -48,8 +48,8 @@ public class Usuario implements Serializable {
 	@Column(unique = true) // Garante unicidade no banco de dados
 	private String nomeUsuario;
 
-	@NotNull
-	@Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula e um número.")
+	@NotNull(message = "A senha não pode ser nula.")
+	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).{8,}$", message = "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula e um número.")
 	private String senha;
 
 	private String foto; // URL ou caminho da foto

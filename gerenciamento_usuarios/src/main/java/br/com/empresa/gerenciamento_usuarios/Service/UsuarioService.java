@@ -55,10 +55,11 @@ public class UsuarioService {
 		}
 
 		// Validação 3: Validar a senha
-		if (!usuario.getSenha().matches("^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
-			throw new IllegalArgumentException(
-					"A senha deve conter pelo menos 8 caracteres, uma letra maiúscula e um número.");
+		if (!usuario.getSenha().matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).{8,}$")) {
+		    throw new IllegalArgumentException(
+		        "A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula e um número.");
 		}
+
 		if (usuario.getTipo() == TipoUsuario.FISICA
 				&& !usuario.getDocumento().matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")) {
 			throw new IllegalArgumentException("O CPF está inválido para um usuário do tipo FISICA.");
@@ -100,9 +101,13 @@ public class UsuarioService {
 		}
 		usuarioRepository.deleteById(id);
 	}
-	
+
 	public List<Usuario> buscarUsuariosPorNome(String nome) {
-	    return usuarioRepository.findByNomeContainingIgnoreCase(nome);
+		return usuarioRepository.findByNomeContainingIgnoreCase(nome);
+	}
+
+	public List<Usuario> listarTodos() {
+		return usuarioRepository.findAll();
 	}
 
 }

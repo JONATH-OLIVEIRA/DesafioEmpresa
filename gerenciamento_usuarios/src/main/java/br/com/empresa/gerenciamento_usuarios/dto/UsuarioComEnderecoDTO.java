@@ -27,4 +27,6 @@ public class UsuarioComEnderecoDTO {
 	public void setEndereco(EnderecoDTO endereco) {
 		this.endereco = endereco;
 	}
+	
+	
 }

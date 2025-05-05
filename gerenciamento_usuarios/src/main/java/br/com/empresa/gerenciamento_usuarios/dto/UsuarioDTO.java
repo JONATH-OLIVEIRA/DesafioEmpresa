@@ -1,18 +1,20 @@
 package br.com.empresa.gerenciamento_usuarios.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Set;
 
 import br.com.empresa.gerenciamento_usuarios.enums.Role;
 import br.com.empresa.gerenciamento_usuarios.enums.Sexo;
 import br.com.empresa.gerenciamento_usuarios.enums.TipoUsuario;
+import br.com.empresa.gerenciamento_usuarios.model.Usuario;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class UsuarioDTO {
 
+	private Long id;
 	@NotNull(message = "O nome não pode ser nulo.")
 	@Size(min = 30, message = "O nome deve ter pelo menos 30 caracteres.")
 	private String nome;
@@ -43,12 +45,29 @@ public class UsuarioDTO {
 	private String documento;
 
 	private Set<Role> roles;
+	
+	private EnderecoDTO endereco;
 
 	public UsuarioDTO() {
 	}
+	public UsuarioDTO(Usuario usuario) {
+		this.id = usuario.getId();
+	    this.nome = usuario.getNome();
+	    this.nomeUsuario = usuario.getNomeUsuario();
+	    this.foto = usuario.getFoto();
+	    this.email = usuario.getEmail();
+	    this.senha = usuario.getSenha();
+	    this.dataNascimento = usuario.getDataNascimento();
+	    this.sexo = usuario.getSexo();
+	    this.tipo = usuario.getTipo();
+	    this.documento = usuario.getDocumento();
+	    this.roles = usuario.getRoles();
+	}
 
-	public UsuarioDTO(String nome, String nomeUsuario, String foto, String email, LocalDate dataNascimento, Sexo sexo,
+
+	public UsuarioDTO(Long id,String nome, String nomeUsuario, String foto, String email, LocalDate dataNascimento, Sexo sexo,
 			TipoUsuario tipo, String documento, String senha, Set<Role> roles) {
+		this.id = id;
 		this.nome = nome;
 		this.nomeUsuario = nomeUsuario;
 		this.foto = foto;
@@ -62,10 +81,19 @@ public class UsuarioDTO {
 	}
 
 	// Getters e Setters
+	
+	
+	
 	public String getNome() {
 		return nome;
 	}
 
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
@@ -141,4 +169,12 @@ public class UsuarioDTO {
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
+	public EnderecoDTO getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(EnderecoDTO endereco) {
+        this.endereco = endereco;
+    }	
+	
 }

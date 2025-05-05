@@ -1,7 +1,5 @@
 package br.com.empresa.gerenciamento_usuarios.Controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -58,21 +55,21 @@ public class UsuarioController {
 		}
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id,
-			@Validated @RequestBody UsuarioDTO usuarioDTO) {
-		try {
-			logger.info("Recebendo requisição para atualizar usuário ID: {}", id);
-			Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id, usuarioDTO);
-			return ResponseEntity.ok(usuarioAtualizado);
-		} catch (IllegalArgumentException e) {
-			logger.error("Erro ao atualizar usuário: {}", e.getMessage());
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-		} catch (RuntimeException e) {
-			logger.error("Erro interno ao atualizar usuário: {}", e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
-	}
+//	@PutMapping("/{id}")
+//	public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id,
+//			@Validated @RequestBody UsuarioDTO usuarioDTO) {
+//		try {
+	//		logger.info("Recebendo requisição para atualizar usuário ID: {}", id);
+	//		Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id, usuarioDTO);
+	//		return ResponseEntity.ok(usuarioAtualizado);
+	//	} catch (IllegalArgumentException e) {
+	//		logger.error("Erro ao atualizar usuário: {}", e.getMessage());
+	//		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+	//	} catch (RuntimeException e) {
+	//		logger.error("Erro interno ao atualizar usuário: {}", e.getMessage());
+	//		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	//	}
+	//}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
@@ -86,12 +83,12 @@ public class UsuarioController {
 		}
 	}
 
-	@GetMapping("/buscar/{nome}")
-	public ResponseEntity<List<Usuario>> buscarPorNome(@PathVariable String nome) {
-		List<Usuario> usuarios = usuarioService.buscarUsuariosPorNome(nome);
-		if (usuarios.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		}
-		return ResponseEntity.ok(usuarios);
-	}
+//	@GetMapping("/buscar/{nome}")
+//	public ResponseEntity<List<Usuario>> buscarPorNome(@PathVariable String nome) {
+	//	List<Usuario> usuarios = usuarioService.buscarUsuariosPorNome(nome);
+	// (usuarios.isEmpty()) {
+	//		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	//	}
+	//	return ResponseEntity.ok(usuarios);
+	//}
 }

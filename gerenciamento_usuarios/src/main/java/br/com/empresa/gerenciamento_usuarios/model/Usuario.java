@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import br.com.empresa.gerenciamento_usuarios.enums.Role;
 import br.com.empresa.gerenciamento_usuarios.enums.Sexo;
@@ -206,11 +207,7 @@ public class Usuario implements Serializable {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		this.senha = encoder.encode(this.senha);
 	}
-
-	public boolean validarSenha(String senha) {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		return encoder.matches(senha, this.senha);
-	}
+	
 
 	@Override
 	public String toString() {
@@ -235,5 +232,9 @@ public class Usuario implements Serializable {
 		Usuario other = (Usuario) obj;
 		return Objects.equals(id, other.id);
 	}
+	public boolean validarSenha(String senha, PasswordEncoder encoder) {
+	    return encoder.matches(senha, this.senha);
+	}
 
+	
 }

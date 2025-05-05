@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.empresa.gerenciamento_usuarios.model.Usuario;
@@ -23,4 +24,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	Page<Usuario> findAllByOrderByNomeAsc(Pageable pageable);
 	
 	Page<Usuario> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
+	
+	// Stored Procedure (native query via função PostgreSQL)
+		@Query(value = "SELECT * FROM listar_usuarios_ordenados()", nativeQuery = true)
+		List<Usuario> buscarUsuariosOrdenadosPorNomeViaProcedure();
 }

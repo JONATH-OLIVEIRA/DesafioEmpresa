@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Erro na Edição</title>
+    <link rel="stylesheet" 
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
+          integrity="sha384-jcqb11/vgDkz5IGwzK4xw5B6uHrbK+0nKSc0cP6YFkkgxz6oDA8GKqUnwWk6Agq8" 
+          crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            margin-top: 100px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 1.8rem;
+        }
+        .btn {
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container d-flex justify-content-center">
+        <div class="card w-100" style="max-width: 600px;">
+            <h1 class="text-danger text-center mb-4">Erro ao Editar Usuário</h1>
+
+            <div class="alert alert-danger text-center" th:text="${erro}">
+                Ocorreu um erro ao processar a edição.
+            </div>
+
+            <p class="text-center mb-4">Verifique os dados informados e tente novamente.</p>
+
+            <div class="d-flex justify-content-around">
+                <a th:href="@{/usuarios/detalhes/editar/{id}(id=${usuarioId})}" 
+                   class="btn btn-primary">
+                    Voltar para Edição
+                </a>
+                <a href="/usuarios/listar" class="btn btn-secondary">
+                    Voltar para Listagem
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

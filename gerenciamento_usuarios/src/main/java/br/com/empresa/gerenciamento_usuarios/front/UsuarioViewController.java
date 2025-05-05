@@ -313,27 +313,39 @@ public class UsuarioViewController {
 
 	@PostMapping("/detalhes/editar/{id}")
 	public String processarEdicao(@PathVariable Long id,
-			@ModelAttribute("usuarioComEnderecoDTO") @Valid UsuarioComEnderecoDTO usuarioComEnderecoDTO,
-			BindingResult result, @RequestParam(value = "file", required = false) MultipartFile file, Model model) {
+	        @ModelAttribute("usuarioComEnderecoDTO") @Valid UsuarioComEnderecoDTO usuarioComEnderecoDTO,
+	        BindingResult result, @RequestParam(value = "file", required = false) MultipartFile file, 
+	        Model model, RedirectAttributes redirectAttributes) {
 
-		carregarDadosCadastro(model);
+	    carregarDadosCadastro(model);
 
-		model.addAttribute("usuarioComEnderecoDTO", usuarioComEnderecoDTO);
+	    if (result.hasErrors()) {
+	        return "editar"; // Volta para a view de edição com erros de validação
+	    }
 
-		if (result.hasErrors()) {
-			return "editar"; // Volta para a view de edição com erros
-		}
+	    try {
+	        usuarioService.atualizarUsuario(id, usuarioComEnderecoDTO, file);
+	        redirectAttributes.addFlashAttribute("sucesso", "Usuário atualizado com sucesso!");
+	        return "redirect:/usuarios/dashboard";
 
-		try {
-			usuarioService.atualizarUsuario(id, usuarioComEnderecoDTO, file);
-			return "redirect:/usuarios/dashboard";
-
-		} catch (Exception e) {
-			logger.error("Erro ao atualizar usuário", e);
-			model.addAttribute("erro", "Erro ao atualizar: " + e.getMessage());
-			return "redirect:/usuarios/listar";
-		}
+	    } catch (Exception e) {
+	        logger.error("Erro ao atualizar usuário ID: " + id, e);
+	        
+	        // Adiciona os dados necessários para voltar ao formulário
+	        model.addAttribute("erro", "Erro ao atualizar usuário: " + e.getMessage());
+	        model.addAttribute("usuarioId", id);
+	        
+	        // Mantém os dados do formulário para não perder o que foi preenchido
+	        model.addAttribute("usuarioComEnderecoDTO", usuarioComEnderecoDTO);
+	        
+	        if (file != null && !file.isEmpty()) {
+	            model.addAttribute("arquivoCarregado", true);
+	        }
+	        
+	        return "erro-edicao"; // Nova página de erro específica para edição
+	    }
 	}
+	
 	@PostMapping("/deletar/{id}")
 	public String deletarUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes,
 	                           @AuthenticationPrincipal UserDetails userDetails) {

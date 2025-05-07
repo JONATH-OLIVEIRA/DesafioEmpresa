@@ -1,0 +1,41 @@
+/* Layout Principal */
+.cadastro-page {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+}
+
+.auth-card {
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin: 0 auto;
+    max-width: 1000px; /* Largura máxima controlada */
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Espaçamento entre seções */
+.form-section {
+    margin-bottom: 2rem;
+}
+
+/* Ajuste dos campos */
+.form-control, .form-select {
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Grid melhorado */
+.row-cols-md-2 > * {
+    padding: 0 15px;
+}
+
+/* Títulos de seção */
+.section-title {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+    margin: 2rem 0 1.5rem;
+}

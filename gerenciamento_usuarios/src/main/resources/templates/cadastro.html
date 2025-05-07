@@ -2,208 +2,210 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Usuário</title>
-
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap + Ícones -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Nossos CSS -->
+    <link rel="stylesheet" th:href="@{/css/components/cards.css}">
+    <link rel="stylesheet" th:href="@{/css/components/forms.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/cadastro.css}">
+</head>
+<body class="cadastro-page">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card auth-card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0"><i class="bi bi-person-plus me-2"></i>Cadastro de Usuário</h2>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <form th:action="@{/usuarios/salvar}" th:object="${usuarioComEnderecoDTO}" method="post"
+                            class="needs-validation" novalidate enctype="multipart/form-data" id="cadastroForm">
+                            
+                            <!-- Seção 1: Dados Básicos -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="nome" class="form-label">Nome Completo*</label>
+                                    <input type="text" th:field="*{usuario.nome}" class="form-control" id="nome" required 
+                                           minlength="3" maxlength="100">
+                                    <div class="invalid-feedback">O nome deve ter entre 3 e 100 caracteres</div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="username" class="form-label">Username*</label>
+                                    <input type="text" th:field="*{usuario.nomeUsuario}" class="form-control" id="username" required>
+                                    <div class="invalid-feedback">Informe um username</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email*</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" th:field="*{usuario.email}" class="form-control" id="email" required 
+                                               pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$">
+                                    </div>
+                                    <div class="invalid-feedback">Email inválido</div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="senha" class="form-label">Senha*</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                        <input type="password" th:field="*{usuario.senha}" class="form-control" id="senha" required 
+                                               pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$">
+                                    </div>
+                                    <div class="invalid-feedback">8+ caracteres, maiúscula, minúscula e número</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Seção 2: Dados Pessoais -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label for="dataNascimento" class="form-label">Data Nascimento*</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                                        <input type="date" th:field="*{usuario.dataNascimento}" class="form-control" 
+                                               id="dataNascimento" required>
+                                    </div>
+                                    <div class="invalid-feedback">Idade mínima: 18 anos</div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="sexo" class="form-label">Sexo*</label>
+                                    <select th:field="*{usuario.sexo}" class="form-select" id="sexo" required>
+                                        <option value="">Selecione...</option>
+                                        <option th:each="s : ${sexos}" th:value="${s}" th:text="${s}"></option>
+                                    </select>
+                                    <div class="invalid-feedback">Selecione um sexo</div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="tipo" class="form-label">Tipo*</label>
+                                    <select th:field="*{usuario.tipo}" id="tipo" class="form-select" required>
+                                        <option value="">Selecione...</option>
+                                        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+                                    </select>
+                                    <div class="invalid-feedback">Selecione um tipo</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label id="labelDocumento" class="form-label">CPF/CNPJ*</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                                        <input type="text" id="documento" th:field="*{usuario.documento}" 
+                                               class="form-control" required>
+                                    </div>
+                                    <div class="invalid-feedback">Informe um CPF ou CNPJ válido</div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="role" class="form-label">Perfil*</label>
+                                    <select th:field="*{usuario.roles}" class="form-select" id="role" required>
+                                        <option value="">Selecione...</option>
+                                        <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+                                    </select>
+                                    <div class="invalid-feedback">Selecione um perfil</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-12">
+                                    <label for="foto" class="form-label">Foto (opcional)</label>
+                                    <input type="file" accept="image/*" name="file" class="form-control" id="foto">
+                                    <small class="text-muted">Formatos aceitos: JPG, PNG (máx. 2MB)</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Seção 3: Endereço -->
+                            <h5 class="section-title">
+                                <i class="bi bi-house me-2"></i>Endereço
+                            </h5>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <label for="cep" class="form-label">CEP*</label>
+                                    <div class="input-group">
+                                        <input type="text" id="cep" th:field="*{endereco.cep}" class="form-control" required
+                                               pattern="\d{5}-?\d{3}">
+                                        <button class="btn btn-outline-secondary" type="button" id="buscarCepBtn">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                                    </div>
+                                    <div class="invalid-feedback">CEP inválido (formato: 00000-000)</div>
+                                </div>
+                                
+                                <div class="col-md-7">
+                                    <label for="logradouro" class="form-label">Logradouro*</label>
+                                    <input type="text" id="logradouro" th:field="*{endereco.logradouro}" 
+                                           class="form-control" required>
+                                    <div class="invalid-feedback">Informe o logradouro</div>
+                                </div>
+                                
+                                <div class="col-md-2">
+                                    <label for="numeroCasa" class="form-label">Número*</label>
+                                    <input type="text" id="numeroCasa" th:field="*{endereco.numeroCasa}" 
+                                           class="form-control" required>
+                                    <div class="invalid-feedback">Informe o número</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="complemento" class="form-label">Complemento</label>
+                                    <input type="text" id="complemento" th:field="*{endereco.complemento}" 
+                                           class="form-control">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="bairro" class="form-label">Bairro*</label>
+                                    <input type="text" id="bairro" th:field="*{endereco.bairro}" 
+                                           class="form-control" required>
+                                    <div class="invalid-feedback">Informe o bairro</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="localidade" class="form-label">Cidade*</label>
+                                    <input type="text" id="localidade" th:field="*{endereco.localidade}" 
+                                           class="form-control" required>
+                                    <div class="invalid-feedback">Informe a cidade</div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="uf" class="form-label">UF*</label>
+                                    <input type="text" id="uf" th:field="*{endereco.uf}" 
+                                           class="form-control" required>
+                                    <div class="invalid-feedback">Informe a UF</div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid mt-5">
+                                <button type="submit" class="btn btn-primary btn-lg py-3">
+                                    <i class="bi bi-check-circle me-2"></i>Cadastrar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        // Função para calcular a idade
-        function validarIdade() {
-            const dataNascimento = document.getElementById("dataNascimento").value;
-            const nascimento = new Date(dataNascimento);
-            const hoje = new Date();
-            let idade = hoje.getFullYear() - nascimento.getFullYear();
-            const m = hoje.getMonth() - nascimento.getMonth();
-            if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
-                idade--;
-            }
-
-            if (idade < 18) {
-                alert("Você precisa ter pelo menos 18 anos para se cadastrar.");
-                document.getElementById("dataNascimento").setCustomValidity("Idade inválida");
-                return false;
-            }
-            document.getElementById("dataNascimento").setCustomValidity("");
-            return true;
-        }
-
-        function buscarCep() {
-            let cep = document.getElementById("cep").value.replace(/\D/g, '');
-            if (cep.length === 8) {
-                fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!data.erro) {
-                            document.getElementById("logradouro").value = data.logradouro;
-                            document.getElementById("bairro").value = data.bairro;
-                            document.getElementById("localidade").value = data.localidade;
-                            document.getElementById("uf").value = data.uf;
-                        } else {
-                            alert("CEP não encontrado!");
-                        }
-                    })
-                    .catch(error => console.error("Erro ao buscar CEP:", error));
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            let form = document.querySelector("form");
-            form.addEventListener("submit", function(event) {
-                if (!form.checkValidity() || !validarIdade()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add("was-validated");
-            }, false);
-        });
-
-        document.addEventListener("DOMContentLoaded", function() {
-            let tipoSelect = document.getElementById("tipo");
-            let documentoInput = document.getElementById("documento");
-            let labelDocumento = document.getElementById("labelDocumento");
-
-            tipoSelect.addEventListener("change", function () {
-                if (tipoSelect.value === "FISICA") {
-                    labelDocumento.innerText = "CPF:";
-                    documentoInput.placeholder = "999.999.999-99";
-                } else {
-                    labelDocumento.innerText = "CNPJ:";
-                    documentoInput.placeholder = "99.999.999/9999-99";
-                }
-            });
-        });
-    </script>
-</head>
-<body class="container mt-4">
-    <h1 class="text-center">Cadastro de Usuário</h1>
-    <form th:action="@{/usuarios/salvar}" th:object="${usuarioComEnderecoDTO}" method="post"
-      class="needs-validation" novalidate enctype="multipart/form-data">
     
-        <!-- 🔹 Nome com validação Bootstrap -->
-        <div class="mb-3">
-            <label for="nome" class="form-label">Nome:</label>
-            <input type="text" th:field="*{usuario.nome}" class="form-control" id="nome" required 
-                   pattern=".{30,}" 
-                   title="O nome deve ter pelo menos 30 caracteres."/>
-            <div class="invalid-feedback">O nome deve ter pelo menos 30 caracteres.</div>
-        </div>
-
-        <!-- 🔹 Username -->
-        <div class="mb-3">
-            <label for="username" class="form-label">Username:</label>
-            <input type="text" th:field="*{usuario.nomeUsuario}" class="form-control" id="username" required />
-        </div>
-
-        <!-- 🔹 Foto -->
-        <div class="mb-3">
-            <label for="foto" class="form-label">Foto:</label>
-            <input type="file" accept="image/*" name="file" class="form-control"/>
-        </div>    
-
-        <!-- 🔹 Email -->
-        <div class="mb-3">
-            <label for="email" class="form-label">Email:</label>
-            <input type="email" th:field="*{usuario.email}" class="form-control" required 
-                   pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$" 
-                   title="O e-mail deve estar em um formato válido (ex: usuario@empresa.com)"/>
-        </div>
-
-        <!-- 🔹 Senha -->
-        <div class="mb-3">
-            <label for="senha" class="form-label">Senha:</label>
-            <input type="password" th:field="*{usuario.senha}" class="form-control" required 
-                   pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$" 
-                   title="A senha deve conter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula e um número."/>
-        </div>
-
-        <!-- 🔹 Data de Nascimento -->
-        <div class="mb-3">
-            <label for="dataNascimento" class="form-label">Data de Nascimento:</label>
-            <input type="date" th:field="*{usuario.dataNascimento}" class="form-control" id="dataNascimento" required onchange="validarIdade()"/>
-            <div class="invalid-feedback">Você deve ser maior de 18 anos.</div>
-        </div>
-
-        <!-- 🔹 Sexo -->
-        <div class="mb-3">
-            <label for="sexo" class="form-label">Sexo:</label>
-            <select th:field="*{usuario.sexo}" class="form-select">
-                <option th:each="s : ${sexos}" th:value="${s}" th:text="${s}"></option>
-            </select>
-        </div>
-
-        <!-- 🔹 Tipo -->
-        <div class="mb-3">
-            <label for="tipo" class="form-label">Tipo:</label>
-            <select th:field="*{usuario.tipo}" id="tipo" class="form-select">
-                <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
-            </select>
-        </div>
-
-        <!-- 🔹 Documento -->
-        <div class="mb-3">
-            <label id="labelDocumento" class="form-label">CPF:</label>
-            <input type="text" id="documento" th:field="*{usuario.documento}" class="form-control" required />
-        </div>
-        
-        <!-- 🔹 Perfil -->
-<div class="mb-3">
-    <label for="role" class="form-label">Perfil:</label>
-    <select th:field="*{usuario.roles}" class="form-select" id="role">
-        <option value="">Selecione o perfil</option>
-        <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
-    </select>
-</div>
-
-       <!-- 🏡 Endereço -->
-        <h2>Endereço</h2>
-
-        <!-- 🔹 CEP -->
-        <div class="mb-3">
-            <label for="cep" class="form-label">CEP:</label>
-            <input type="text" id="cep" th:field="*{endereco.cep}" class="form-control" required onblur="buscarCep()"/>
-        </div>
-
-        <!-- 🔹 Logradouro -->
-        <div class="mb-3">
-            <label for="logradouro" class="form-label">Logradouro:</label>
-            <input type="text" id="logradouro" th:field="*{endereco.logradouro}" class="form-control" required/>
-        </div>
-
-        <!-- 🔹 Complemento -->
-        <div class="mb-3">
-            <label for="complemento" class="form-label">Complemento:</label>
-            <input type="text" id="complemento" th:field="*{endereco.complemento}" class="form-control"/>
-        </div>
-
-        <!-- 🔹 Número -->
-        <div class="mb-3">
-            <label for="numeroCasa" class="form-label">Número:</label>
-            <input type="text" id="numeroCasa" th:field="*{endereco.numeroCasa}" class="form-control" required/>
-        </div>
-
-        <!-- 🔹 Bairro -->
-        <div class="mb-3">
-            <label for="bairro" class="form-label">Bairro:</label>
-            <input type="text" id="bairro" th:field="*{endereco.bairro}" class="form-control" required/>
-        </div>
-
-        <!-- 🔹 Cidade -->
-        <div class="mb-3">
-            <label for="localidade" class="form-label">Cidade:</label>
-            <input type="text" id="localidade" th:field="*{endereco.localidade}" class="form-control" required/>
-        </div>
-
-        <!-- 🔹 Estado -->
-        <div class="mb-3">
-            <label for="uf" class="form-label">Estado:</label>
-            <input type="text" id="uf" th:field="*{endereco.uf}" class="form-control" required/>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
-    </form>
+   <!-- JavaScript Externalizado -->
+    <script src="/js/modules/validacaoIdade.js"></script>
+    <script src="/js/modules/cepService.js"></script>
+    <script src="/js/modules/mascaraDocumento.js"></script>
+    <script src="/js/modules/formValidation.js"></script>
 </body>
 </html>

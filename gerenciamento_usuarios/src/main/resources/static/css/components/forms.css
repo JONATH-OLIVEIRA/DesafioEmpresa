@@ -1,0 +1,28 @@
+/* Apenas estilos base para formulários */
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.invalid-feedback {
+    font-size: 0.85rem;
+    color: #dc3545;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+}
+.form-control, .input-group-text {
+    height: 45px; /* Ajuste conforme necessário */
+    display: flex;
+    align-items: center;
+}
+.input-group-text i {
+    font-size: 1.2rem; /* Ajuste conforme necessário */
+    display: flex;
+    align-items: center;
+}
+#buscarCepBtn {
+    height: 45px; /* Ajuste para o mesmo tamanho dos inputs */
+    display: flex;
+    align-items: center;
+}

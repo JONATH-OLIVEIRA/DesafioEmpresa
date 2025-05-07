@@ -1,83 +1,54 @@
 <!DOCTYPE html>
 <html lang="pt" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <style>
-    .user-photo-container {
-      width: 150px;
-      aspect-ratio: 3 / 4; /* Proporção 3x4 */
-      overflow: hidden;
-      border-radius: 8px;
-      margin: 0 auto 1rem auto;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .user-photo-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* Cobre o container mantendo proporção */
-    }
-
-    .btn-dashboard {
-      min-width: 100%;
-    }
-
-    .logout-btn {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <!-- Bootstrap + Ícones -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Nossos CSS -->
+    <link rel="stylesheet" th:href="@{/css/components/cards.css}">
+    <link rel="stylesheet" th:href="@{/css/components/buttons.css}">
+    <link rel="stylesheet" th:href="@{/css/components/user-profile.css}">
+    <link rel="stylesheet" th:href="@{/css/pages/dashboard.css}">
 </head>
-<body class="d-flex flex-column align-items-center justify-content-center vh-100">
+<body class="dashboard-page">
+    <div class="card dashboard-card" th:if="${usuario}">
+        <a href="/logout" class="btn btn-outline-secondary logout-btn">
+            <i class="bi bi-box-arrow-right"></i> Sair
+        </a>
 
-  <div class="card p-4 shadow-lg w-100" style="max-width: 400px;" th:if="${usuario}">
-    
-    <a href="/logout" class="btn btn-outline-secondary logout-btn">
-      <i class="bi bi-box-arrow-right"></i> Sair
-    </a>
+        <div class="text-center">
+            <div th:if="${usuario.foto}" class="user-photo-container">
+                <img th:src="@{${usuario.foto} + '?v=' + ${#temporals.format(now, 'yyyyMMddHHmmss')}}" alt="Foto 3x4">
+            </div>
+            <h5 th:text="${usuario.nome} ?: 'Usuário'"></h5>
+            <p class="text-muted mb-3" th:text="${usuario.email}"></p>       
+        </div>
 
-    <!-- Resumo do usuário -->
-    <div class="text-center">
-      <div th:if="${usuario.foto}" class="user-photo-container">
-        <img th:src="@{${usuario.foto} + '?v=' + ${#temporals.format(now, 'yyyyMMddHHmmss')}}" alt="Foto 3x4">
-      </div>
-      <h5 th:text="${usuario.nome} ?: 'Usuário'"></h5>
-      <p class="text-muted mb-3" th:text="${usuario.email}"></p>
-
-      <a th:href="@{/usuarios/detalhes/{id}(id=${usuario.id})}" class="btn btn-sm btn-outline-primary mb-3">
-        <i class="bi bi-eye"></i> Ver Detalhes
-      </a>
+        <div class="d-grid gap-3">
+            <a href="/usuarios/listar" class="btn btn-primary btn-dashboard">
+                <i class="bi bi-people"></i> Gerenciar Usuários
+            </a>
+            <div class="row g-2">
+                <div class="col-6">
+                    <a th:href="@{/usuarios/detalhes/editar/{id}(id=${usuario.id})}" class="btn btn-warning btn-dashboard">
+                        <i class="bi bi-pencil"></i> Editar Perfil
+                    </a>
+                </div>
+                <div class="col-6">
+                    <a th:href="@{/usuarios/detalhes/{id}(id=${usuario.id})}" class="btn btn-info btn-dashboard">
+                        <i class="bi bi-file-text"></i> Detalhes
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Ações do Dashboard -->
-    <div class="d-grid gap-3">
-      <a href="/usuarios/listar" class="btn btn-primary btn-dashboard">
-        <i class="bi bi-people"></i> Gerenciar Usuários
-      </a>
-      <div class="row g-2">
-        <div class="col-6">
-          <a th:href="@{/usuarios/detalhes/editar/{id}(id=${usuario.id})}" class="btn btn-warning btn-dashboard">
-            <i class="bi bi-pencil"></i> Editar Perfil
-          </a>
-        </div>
-        <div class="col-6">
-          <a th:href="@{/usuarios/detalhes/{id}(id=${usuario.id})}" class="btn btn-info btn-dashboard">
-            <i class="bi bi-file-text"></i> Detalhes
-          </a>
-        </div>
-      </div>
+    <div th:unless="${usuario}" class="alert alert-danger mt-4">
+        Nenhum usuário autenticado encontrado.
     </div>
 
-  </div>
-
-  <!-- Caso não tenha usuário logado -->
-  <div th:unless="${usuario}" class="alert alert-danger mt-4">
-    Nenhum usuário autenticado encontrado.
-  </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
